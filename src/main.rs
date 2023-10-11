@@ -22,7 +22,7 @@ fn main() {
             Ok(packet) => {
                 if let Some(ethernet_packet) = EthernetPacket::new(packet) {
                     println!("New packet:");
-                    println!("{:?}",ethernet_packet);
+                    println!("{} => {}: {}",ethernet_packet.get_destination(),ethernet_packet.get_source(),ethernet_packet.get_ethertype());
                 }
             }
             Err(e)=> {
