@@ -1,7 +1,8 @@
 use pnet::datalink::Channel::Ethernet;
 use pnet::datalink;
 use pnet::packet::ethernet::EthernetPacket;
-
+use pnet::packet::Packet;
+use pnet::packet::FromPacket;
 fn main() {
 
     let interfaces = datalink::interfaces();
@@ -23,13 +24,26 @@ fn main() {
                 if let Some(ethernet_packet) = EthernetPacket::new(packet) {
                     println!("New packet:");
                     println!("{} => {}: {}",ethernet_packet.get_destination(),ethernet_packet.get_source(),ethernet_packet.get_ethertype());
+                    let packet = ethernet_packet.packet();
+                    let payload = ethernet_packet.payload();
+                    let from_packet = ethernet_packet.from_packet();
+                    //println!("---");
+                    println!("packet: {:?}", packet);
+                    // print the full packet as an array of u8
+                    println!("payload: {:?}", payload);
+                    // print the payload as an array of u8
+                    println!("from_packet: {:?}", from_packet);
+                    // print the hearder infos: mac address, ethertype, ...
+                    // and the payload as an array of u8
+                    println!("---");
+                    
                 }
             }
             Err(e)=> {
                 panic!("An error occurred while reading: {}", e);
             }
         }
-        }
+    }
 
 
 }
