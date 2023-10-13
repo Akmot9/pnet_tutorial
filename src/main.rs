@@ -1,9 +1,13 @@
 use pnet::datalink::Channel::Ethernet;
 use pnet::datalink;
 use pnet::packet::ethernet::EthernetPacket;
-use pnet::packet::Packet;
-use pnet::packet::FromPacket;
+use pnet::datalink::NetworkInterface;
+
+
+
 use std::thread;
+
+mod info_packet;
 
 fn main() {
     let interfaces = datalink::interfaces();
@@ -22,7 +26,7 @@ fn main() {
     }
 }
 
-fn capture_packets(interface: datalink::NetworkInterface) {
+fn capture_packets(interface: NetworkInterface) {
     let (_, mut rx) = match datalink::channel(&interface, 
                                                                     Default::default()) {
         Ok(Ethernet(tx, rx)) => (tx, rx),
@@ -38,24 +42,8 @@ fn capture_packets(interface: datalink::NetworkInterface) {
         match rx.next() {
             Ok(packet) => {
                 if let Some(ethernet_packet) = EthernetPacket::new(packet) {
-                    println!("New packet on {}", interface.name);
-                    println!("{} => {}: {}",
-                        ethernet_packet.get_destination(),
-                        ethernet_packet.get_source(),
-                        ethernet_packet.get_ethertype());
-                    let packet = ethernet_packet.packet();
-                    let payload = ethernet_packet.payload();
-                    let from_packet = ethernet_packet.from_packet();
-                    //println!("---");
-                    println!("packet: {:?}", packet);
-                    // print the full packet as an array of u8
-                    println!("payload: {:?}", payload);
-                    // print the payload as an array of u8
-                    println!("from_packet: {:?}", from_packet);
-                    // print the hearder infos: mac address, ethertype, ...
-                    // and the payload as an array of u8
                     println!("---");
-                    
+                    info_packet::process_packet_by_type(&interface.name, &ethernet_packet)
                 }
             }
             Err(e)=> {
@@ -64,3 +52,5 @@ fn capture_packets(interface: datalink::NetworkInterface) {
         }
     }
 }
+
+
