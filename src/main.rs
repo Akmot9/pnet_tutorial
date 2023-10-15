@@ -3,8 +3,6 @@ use pnet::datalink;
 use pnet::packet::ethernet::EthernetPacket;
 use pnet::datalink::NetworkInterface;
 
-
-
 use std::thread;
 
 mod info_packet;
@@ -37,7 +35,7 @@ fn capture_packets(interface: NetworkInterface) {
         ),
     };
 
-    println!("Start reading packet: ");
+    println!("Start reading packet: {}", &interface);
     loop {
         match rx.next() {
             Ok(packet) => {
