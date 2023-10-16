@@ -35,7 +35,7 @@ fn capture_packets(interface: NetworkInterface) {
         ),
     };
 
-    println!("Start reading packet: {}", &interface);
+    println!("Start thread reading packet on interface: {}", &interface);
     loop {
         match rx.next() {
             Ok(packet) => {
